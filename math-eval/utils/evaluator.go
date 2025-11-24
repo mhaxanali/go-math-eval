@@ -28,3 +28,12 @@ func tokenize(expr string) []string {
 	return expr_tokens
 
 }
+
+func contains(comp_slice []string, comp_str string) bool {
+	for _, s := range comp_slice {
+		if s == comp_str {
+			return true
+		}
+	}
+	return false
+}
