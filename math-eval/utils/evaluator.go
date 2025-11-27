@@ -10,29 +10,53 @@ import (
 
 var opers [7]rune = [7]rune{'+', '-', '*', '/', '^', '(', ')'}
 
-func Evaluate(expr string) ([]string, error) {
+func count(col []string, com string) int {
+	var count int
+	for _, v := range col {
+		if v == com {
+			count++
+		}
+	}
+	return count
+}
 
-	var err error = nil
+func Evaluate(expr string) ([]string, error) {
+	var err error
+	var result []string
+
+	expr = strings.ReplaceAll(expr, " ", "")
 
 	expr_tokens := tokenize(expr)
-
-	if !(contains(expr_tokens, "(") || contains(expr_tokens, ")")) {
-		result, err := solveTokens(expr_tokens)
-		return result, err
+	for {
+		if !(contains(expr_tokens, "(") || contains(expr_tokens, ")")) {
+			result, err = solveTokens(expr_tokens)
+			return result, err
+		} else {
+			if count(expr_tokens, "(") != count(expr_tokens, ")") {
+				return []string{}, errors.New("mismatched brackets")
+			} else {
+				expr_tokens, err = solveInnerMostBrackets(expr_tokens)
+				if err != nil {
+					return []string{}, err
+				}
+			}
+		}
 	}
-
-	return []string{}, err
 }
 
 func tokenize(expr string) []string {
-
 	for _, oper := range opers {
 		expr = strings.ReplaceAll(expr, string(oper), fmt.Sprintf(",%c,", oper))
 	}
-	expr_tokens := strings.Split(expr, ",")
-
+	rawTokens := strings.Split(expr, ",")
+	var expr_tokens []string
+	for _, t := range rawTokens {
+		t = strings.TrimSpace(t) // remove spaces
+		if t != "" {             // skip empty tokens
+			expr_tokens = append(expr_tokens, t)
+		}
+	}
 	return expr_tokens
-
 }
 
 func contains(comp_slice []string, comp_str string) bool {
@@ -143,4 +167,28 @@ func solve(tokens []string, i int) ([]string, error) {
 
 	tokens = append(tokens[:i-1], append([]string{fmt.Sprintf("%.2f", tmp)}, tokens[i+2:]...)...)
 	return tokens, err
+}
+
+func solveInnerMostBrackets(tokens []string) ([]string, error) {
+	var open int
+	var close int
+
+	for i, v := range tokens {
+		if v == "(" {
+			open = i
+		} else if v == ")" {
+			close = i
+			break
+		}
+	}
+	inner := tokens[open+1 : close]
+	solved, err := solveTokens(inner)
+
+	if err != nil {
+		return []string{}, err
+	}
+
+	newTokens := append(tokens[:open], append(solved, tokens[close+1:]...)...)
+
+	return newTokens, nil
 }
