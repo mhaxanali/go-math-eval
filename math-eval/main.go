@@ -7,9 +7,10 @@ import (
 )
 
 func main() {
-	str, err := utils.Evaluate("2+2")
+	result, err := utils.Evaluate("0/0")
 	if err != nil {
+		fmt.Println(err)
 		return
 	}
-	fmt.Print(str)
+	fmt.Print(result)
 }
