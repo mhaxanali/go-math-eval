@@ -124,21 +124,23 @@ func solve(tokens []string, i int) ([]string, error) {
 	if err != nil {
 		return []string{}, errors.New("invalid characters passed")
 	}
-	if tokens[i] == "^" {
+	switch tokens[i] {
+	case "^":
 		tmp = math.Pow(hlp1, hlp2)
-	} else if tokens[i] == "/" {
-		if hlp2 != 0 {
-			tmp = hlp1 / hlp2
-		} else {
+	case "/":
+		if hlp2 == 0 {
 			return []string{}, errors.New("cannot divide by zero")
+		} else {
+			tmp = hlp1 / hlp2
 		}
-	} else if tokens[i] == "*" {
+	case "*":
 		tmp = hlp1 * hlp2
-	} else if tokens[i] == "+" {
+	case "+":
 		tmp = hlp1 + hlp2
-	} else if tokens[i] == "-" {
+	case "-":
 		tmp = hlp1 - hlp2
 	}
+
 	tokens = append(tokens[:i-1], append([]string{fmt.Sprintf("%.2f", tmp)}, tokens[i+2:]...)...)
 	return tokens, err
 }
