@@ -91,3 +91,9 @@ I was learning Go and decided to remake one of my python projects in Go and this
     ```bash
     ./main.exe <expression>
     ```
+
+## Notes
+- Use `" "` if providing spaces inside expression such as:
+    ```bash
+    ./main.exe "2 + 2"
+    ```
