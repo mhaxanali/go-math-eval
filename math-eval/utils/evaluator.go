@@ -20,6 +20,35 @@ func count(col []string, com string) int {
 	return count
 }
 
+func handleUnaryMinus(tokens []string) []string {
+	if len(tokens) == 0 {
+		return tokens
+	}
+
+	// If the expression starts with a unary minus
+	if tokens[0] == "-" && len(tokens) > 1 {
+		tokens = append([]string{"-" + tokens[1]}, tokens[2:]...)
+	}
+
+	// Scan through tokens
+	i := 1
+	for i < len(tokens)-1 {
+		prev := tokens[i-1]
+		curr := tokens[i]
+
+		if curr == "-" {
+			// Unary if previous token is an operator or "("
+			if prev == "(" || prev == "+" || prev == "-" || prev == "*" || prev == "/" || prev == "^" {
+				tokens = append(tokens[:i], append([]string{"-" + tokens[i+1]}, tokens[i+2:]...)...)
+				continue // re-check same index since slice changed
+			}
+		}
+		i++
+	}
+
+	return tokens
+}
+
 func Evaluate(expr string) ([]string, error) {
 	var err error
 	var result []string
@@ -27,6 +56,8 @@ func Evaluate(expr string) ([]string, error) {
 	expr = strings.ReplaceAll(expr, " ", "")
 
 	expr_tokens := tokenize(expr)
+	expr_tokens = handleUnaryMinus(expr_tokens)
+
 	for {
 		if !(contains(expr_tokens, "(") || contains(expr_tokens, ")")) {
 			result, err = solveTokens(expr_tokens)
