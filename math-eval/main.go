@@ -14,11 +14,13 @@ func main() {
 
 	args := os.Args
 
-	if len(args) > 1 {
+	if len(args) == 2 {
 		expr = args[1]
-	} else {
+	} else if len(args) == 1 {
 		fmt.Print("Error: no expression provided")
 		return
+	} else {
+		fmt.Printf("Error: Invalid number of arguments")
 	}
 
 	result, err := utils.Evaluate(expr)
