@@ -1,23 +1,25 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
 	"strconv"
-	"strings"
 
 	"github.com/mhaxanali/go-math-eval/math-eval/utils"
 )
 
 func main() {
 	var evaluated float64
+	var expr string
 
-	reader := bufio.NewReader(os.Stdin)
+	args := os.Args
 
-	fmt.Printf("Enter Expression: ")
-	expr, _ := reader.ReadString('\n')
-	expr = strings.TrimSpace(expr)
+	if len(args) > 1 {
+		expr = args[1]
+	} else {
+		fmt.Print("Error: no expression provided")
+		return
+	}
 
 	result, err := utils.Evaluate(expr)
 
@@ -27,11 +29,7 @@ func main() {
 		return
 	}
 
-	for _, v := range result {
-		evaluated, err = strconv.ParseFloat(v, 64)
-		if err != nil {
-		}
-	}
+	evaluated, _ = strconv.ParseFloat(result[0], 64)
 
 	fmt.Printf("Answer: %.3f", evaluated)
 
